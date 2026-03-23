@@ -305,10 +305,9 @@ async function processQueue(){
   if(processing) return;
   processing = true;
   while(artQueue.length > 0){
-    const record = artQueue.splice(0, 1)[0];
-    await fetchArtForRecord(record);
+    const batch = artQueue.splice(0, 10);
+    await Promise.all(batch.map(fetchArtForRecord));
     updateArtInDOM();
-    await new Promise(res => setTimeout(res, 700));
   }
   processing = false;
 }
