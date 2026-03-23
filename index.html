@@ -199,6 +199,13 @@ function queueArtwork(r){
   if(!artQueue.find(x => recordKey(x) === k)) artQueue.push(r);
 }
 
+const DIRECT_ART = {
+  "AC/DC|||Dirty Deeds Done Dirt Cheap":"https://upload.wikimedia.org/wikipedia/en/5/51/Dirty_Deeds_Done_Dirt_Cheap_%28ACDC_album_-_cover_art0.jpg",
+  "The Surfrajettes|||Easy as Pie":"https://f4.bcbits.com/img/a0340415336_10.jpg",
+  "David Wilcox|||Out of the Woods":"https://img1.wsimg.com/isteam/ip/58309cf4-6daf-4283-af09-1874293ceab0/alb_outofthewoods.jpg/:/cr=t:0%25,l:0%25,w:100%25,h:100%25/rs=w:1240,h:1240,cg:true",
+  "The Marias|||Cinema":"https://f4.bcbits.com/img/a4140092108_2.jpg",
+};
+
 const WIKI_TITLES = {
   "AC/DC|||Dirty Deeds Done Dirt Cheap":"Dirty_Deeds_Done_Dirt_Cheap",
   "Arcade Fire|||Reflektor":"Reflektor",
@@ -211,7 +218,7 @@ const WIKI_TITLES = {
   "The Beatles|||Hey Jude":"Hey_Jude_(Beatles_album)",
   "The Beatles|||Let It Be":"Let_It_Be_(album)",
   "The Beatles|||The Beatles":"The_Beatles_(album)",
-  "Bert Kaempfert|||Christmas Wonderland":"Bert_Kaempfert",
+  "Bert Kaempfert|||Christmas Wonderland":"Christmas_Wonderland",
   "Billy Joel|||Greatest Hits Volume I & Volume II":"Greatest_Hits_%E2%80%93_Volume_I_%26_Volume_II",
   "The Black Keys|||Brothers":"Brothers_(The_Black_Keys_album)",
   "Bob and Doug McKenzie|||The Great White North":"The_Great_White_North_(album)",
@@ -244,7 +251,7 @@ const WIKI_TITLES = {
   "Meat Loaf|||Bat Out of Hell":"Bat_Out_of_Hell",
   "Meat Loaf|||Dead Ringer":"Dead_Ringer_(album)",
   "Meligrove Band|||Planets Conspire":"Planets_Conspire",
-  "Meligrove Band|||Shimmering Lights":"Meligrove_Band",
+  "Meligrove Band|||Shimmering Lights":"Shimmering_Lights",
   "Menomena|||Friend and Foe":"Friend_and_Foe",
   "Menomena|||Mines":"Mines_(album)",
   "Menomena|||Moms":"Moms_(album)",
@@ -276,6 +283,8 @@ async function fetchArtForRecord(r){
   const k = recordKey(r);
   if(k in artCache) return;
   const wikiTitle = WIKI_TITLES[k];
+  const directArt = DIRECT_ART[k];
+  if(directArt){ artCache[k]=directArt; return; }
   if(!wikiTitle){ artCache[k]=null; return; }
   try {
     const url = `https://en.wikipedia.org/w/api.php?action=query&titles=${wikiTitle}&prop=pageimages&format=json&pithumbsize=400&pilicense=any&origin=*`;
