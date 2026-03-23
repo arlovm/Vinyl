@@ -278,13 +278,14 @@ async function fetchArtForRecord(r){
   const wikiTitle = WIKI_TITLES[k];
   if(!wikiTitle){ artCache[k]=null; return; }
   try {
-    const url = `https://en.wikipedia.org/api/rest_v1/page/summary/${wikiTitle}`;
-    const res = await fetch(url, {headers:{'User-Agent':'KvMRecordCollection/1.0'}});
+    const url = `https://en.wikipedia.org/w/api.php?action=query&titles=${wikiTitle}&prop=pageimages&format=json&pithumbsize=400&origin=*`;
+    const res = await fetch(url);
     if(!res.ok) throw 0;
     const data = await res.json();
-    const img = data.thumbnail?.source || null;
-    // Upgrade to larger size if available
-    artCache[k] = img ? img.replace(/\/\d+px-/, '/400px-') : null;
+    const pages = data.query?.pages || {};
+    const page = Object.values(pages)[0];
+    const img = page?.thumbnail?.source || null;
+    artCache[k] = img;
   } catch {
     artCache[k] = null;
   }
