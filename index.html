@@ -289,7 +289,8 @@ async function fetchArtForRecord(r){
   if(!wikiTitle){ artCache[k]=null; return; }
   try {
     const url = `https://en.wikipedia.org/w/api.php?action=query&titles=${wikiTitle}&prop=pageimages&format=json&pithumbsize=400&pilicense=any&origin=*`;
-    const res = await fetch(url);
+    let res = await fetch(url);
+    if(res.status===429){ await new Promise(r=>setTimeout(r,1000)); res=await fetch(url); }
     if(!res.ok) throw 0;
     const data = await res.json();
     const pages = data.query?.pages || {};
@@ -305,9 +306,10 @@ async function processQueue(){
   if(processing) return;
   processing = true;
   while(artQueue.length > 0){
-    const batch = artQueue.splice(0, 10);
+    const batch = artQueue.splice(0, 6);
     await Promise.all(batch.map(fetchArtForRecord));
     updateArtInDOM();
+    await new Promise(res => setTimeout(res, 150));
   }
   processing = false;
 }
