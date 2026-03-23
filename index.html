@@ -278,7 +278,7 @@ async function fetchArtForRecord(r){
   const wikiTitle = WIKI_TITLES[k];
   if(!wikiTitle){ artCache[k]=null; return; }
   try {
-    const url = `https://en.wikipedia.org/w/api.php?action=query&titles=${wikiTitle}&prop=pageimages&format=json&pithumbsize=400&origin=*`;
+    const url = `https://en.wikipedia.org/w/api.php?action=query&titles=${wikiTitle}&prop=pageimages&format=json&pithumbsize=400&pilicense=any&origin=*`;
     const res = await fetch(url);
     if(!res.ok) throw 0;
     const data = await res.json();
