@@ -352,13 +352,24 @@ async function fetchArtForRecord(r){
 async function processQueue(){
   if(processing) return;
   processing = true;
+  let newArtFetched = false;
   while(artQueue.length > 0){
     const batch = artQueue.splice(0, 3);
     await Promise.all(batch.map(fetchArtForRecord));
     updateArtInDOM();
     await new Promise(res => setTimeout(res, 500));
+    newArtFetched = true;
   }
   processing = false;
+  // Save any newly fetched art URLs to bin so future visits skip Wikipedia
+  if(newArtFetched){
+    if(!binData.artCache) binData.artCache = {};
+    let changed = false;
+    Object.entries(artCache).forEach(([k,v]) => {
+      if(v && !binData.artCache[k]){ binData.artCache[k] = v; changed = true; }
+    });
+    if(changed) saveBinData();
+  }
 }
 
 function updateArtInDOM(){
@@ -496,8 +507,12 @@ async function loadBinData(){
     if(!res.ok) throw 0;
     binData = await res.json();
     if(!binData.listens) binData.listens = {};
-  } catch { binData = {listens:{}, nowPlaying:null}; }
+    if(!binData.artCache) binData.artCache = {};
+    // Seed artCache from saved URLs — skips Wikipedia for known albums
+    Object.entries(binData.artCache).forEach(([k,v]) => { artCache[k] = v; });
+  } catch { binData = {listens:{}, nowPlaying:null, artCache:{}}; }
   renderNowPlaying();
+  renderGrid(); // Re-render now that cached art is available
 }
 
 async function saveBinData(){
