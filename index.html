@@ -65,11 +65,53 @@
   .modal-tracks{border-top:1px solid var(--border);padding:1.5rem 2rem}
   .modal-tracks-label{font-size:.62rem;color:var(--gold);letter-spacing:.15em;text-transform:uppercase;margin-bottom:1rem}
   .tracks-content{font-size:.78rem;color:var(--text-mid);line-height:1.9;white-space:pre-line;columns:2;column-gap:2rem}
+
+  /* ── NOW PLAYING ── */
+  .now-playing{display:none;background:var(--surface);border-bottom:1px solid var(--gold-dim);padding:0}
+  .now-playing.visible{display:block}
+  .now-playing-inner{max-width:1400px;margin:0 auto;padding:1.5rem 2rem;display:flex;gap:2rem;align-items:flex-start}
+  .now-playing-art{width:120px;height:120px;flex-shrink:0;border-radius:4px;overflow:hidden;background:var(--surface2)}
+  .now-playing-art img{width:100%;height:100%;object-fit:cover;display:block}
+  .now-playing-art-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+  .now-playing-art-placeholder svg{width:40px;height:40px;color:var(--border)}
+  .now-playing-info{flex:1;min-width:0}
+  .now-playing-label{font-size:.58rem;color:var(--gold);letter-spacing:.15em;text-transform:uppercase;margin-bottom:.4rem;display:flex;align-items:center;gap:.5rem}
+  .now-playing-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);animation:pulse 1.5s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+  .now-playing-artist{font-size:.7rem;color:var(--text-dim);letter-spacing:.08em;text-transform:uppercase;margin-bottom:.2rem}
+  .now-playing-title{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--text);margin-bottom:.8rem}
+  .now-playing-tracks{font-size:.7rem;color:var(--text-dim);line-height:1.8;white-space:pre-line;max-height:80px;overflow:hidden;mask-image:linear-gradient(to bottom,black 60%,transparent 100%)}
+  .now-playing-tracks-col{columns:2;column-gap:2rem}
+  .now-playing-expires{font-size:.58rem;color:var(--text-dim);margin-top:.6rem;letter-spacing:.05em}
+  /* ── MODAL PLAYING BUTTON + STATS ── */
+  .modal-play-section{padding:1.2rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;gap:2rem;flex-wrap:wrap}
+  .play-btn{background:none;border:1px solid var(--gold-dim);color:var(--gold);font-family:'DM Mono',monospace;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;padding:8px 20px;border-radius:3px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.5rem}
+  .play-btn:hover{background:rgba(201,168,76,.1);border-color:var(--gold)}
+  .play-btn.active{background:rgba(201,168,76,.15);border-color:var(--gold)}
+  .play-btn-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);opacity:0;transition:opacity .2s}
+  .play-btn.active .play-btn-dot{opacity:1;animation:pulse 1.5s ease-in-out infinite}
+  .play-stats{display:flex;gap:1.5rem}
+  .play-stat{display:flex;flex-direction:column;gap:.2rem}
+  .play-stat-label{font-size:.58rem;color:var(--text-dim);letter-spacing:.1em;text-transform:uppercase}
+  .play-stat-value{font-size:.8rem;color:var(--text-mid)}
+  @media(max-width:700px){.now-playing-inner{padding:1rem;gap:1rem}.now-playing-art{width:80px;height:80px}.now-playing-title{font-size:1rem}.now-playing-tracks-col{columns:1}.modal-play-section{padding:1rem;gap:1rem}}
   ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
   @media(max-width:700px){.header-inner{flex-wrap:wrap;height:auto;padding:.75rem 0;gap:.75rem}.site-title{font-size:1.1rem}.sort-controls{order:3;width:100%}.sort-btn{flex:1;text-align:center}.search-wrap{max-width:100%;flex:1}.modal-top{flex-direction:column}.modal-art{width:100%;height:240px;border-radius:6px 6px 0 0}.tracks-content{columns:1}.grid{grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:1rem}.main{padding:1rem}header{padding:0 1rem}}
 </style>
 </head>
 <body>
+<div class="now-playing" id="now-playing">
+  <div class="now-playing-inner">
+    <div class="now-playing-art" id="np-art"></div>
+    <div class="now-playing-info">
+      <div class="now-playing-label"><span class="now-playing-dot"></span>Now Playing</div>
+      <div class="now-playing-artist" id="np-artist"></div>
+      <div class="now-playing-title" id="np-title"></div>
+      <div class="now-playing-tracks now-playing-tracks-col" id="np-tracks"></div>
+      <div class="now-playing-expires" id="np-expires"></div>
+    </div>
+  </div>
+</div>
 <header>
   <div class="header-inner">
     <div>
@@ -100,6 +142,13 @@
         <div class="modal-artist" id="modal-artist"></div>
         <div class="modal-title" id="modal-title"></div>
         <div class="modal-fields" id="modal-fields"></div>
+      </div>
+    </div>
+    <div class="modal-play-section" id="modal-play-section">
+      <button class="play-btn" id="play-btn"><span class="play-btn-dot"></span>Playing</button>
+      <div class="play-stats">
+        <div class="play-stat"><div class="play-stat-label">Play Count</div><div class="play-stat-value" id="play-count">—</div></div>
+        <div class="play-stat"><div class="play-stat-label">Last Played</div><div class="play-stat-value" id="last-played">—</div></div>
       </div>
     </div>
     <div class="modal-tracks">
@@ -306,10 +355,10 @@ async function processQueue(){
   if(processing) return;
   processing = true;
   while(artQueue.length > 0){
-    const batch = artQueue.splice(0, 6);
+    const batch = artQueue.splice(0, 3);
     await Promise.all(batch.map(fetchArtForRecord));
     updateArtInDOM();
-    await new Promise(res => setTimeout(res, 150));
+    await new Promise(res => setTimeout(res, 500));
   }
   processing = false;
 }
@@ -394,6 +443,7 @@ function renderGrid(){
 function openModal(idx){
   const r = getFiltered()[idx]; if(!r) return;
   const k = recordKey(r);
+  currentModalKey = k;
   document.getElementById('modal').dataset.key = k;
   document.getElementById('modal-artist').textContent = r.artist;
   document.getElementById('modal-title').textContent = r.title;
@@ -407,6 +457,7 @@ function openModal(idx){
   if(url) artEl.innerHTML = `<img src="${url}" alt="${r.title}">`;
   else if(url===null) artEl.innerHTML = `<div class="modal-art-fallback">${vinylSVG}</div>`;
   else artEl.innerHTML = `<div class="modal-art-loading"></div>`;
+  updateModalPlayStats(k);
   document.getElementById('modal-overlay').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
@@ -414,6 +465,7 @@ function openModal(idx){
 function closeModal(){
   document.getElementById('modal-overlay').classList.remove('open');
   document.getElementById('modal').dataset.key = '';
+  currentModalKey = null;
   document.body.style.overflow = '';
 }
 
@@ -429,6 +481,108 @@ document.querySelectorAll('.sort-btn').forEach(btn => {
 });
 
 renderGrid();
+
+// ── JSONBIN CONFIG ────────────────────────────────────────────────────────────
+const BIN_ID = '69c1df91c3097a1dd552e9e4';
+const API_KEY = '$2a$10$QMKpeb3WGSe7a1/Dl1IyqOSqPG7pRltRIYAzJ7IH35CMPioShl4zG';
+const BIN_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
+const HEADERS = {'Content-Type':'application/json','X-Master-Key':API_KEY,'X-Bin-Meta':'false'};
+const NOW_PLAYING_DURATION = 60 * 60 * 1000; // 1 hour in ms
+
+let binData = {listens:{}, nowPlaying:null};
+let currentModalKey = null;
+
+async function loadBinData(){
+  try {
+    const res = await fetch(BIN_URL, {headers:HEADERS});
+    if(!res.ok) throw 0;
+    binData = await res.json();
+    if(!binData.listens) binData.listens = {};
+  } catch { binData = {listens:{}, nowPlaying:null}; }
+  renderNowPlaying();
+}
+
+async function saveBinData(){
+  try {
+    await fetch(BIN_URL, {method:'PUT', headers:HEADERS, body:JSON.stringify(binData)});
+  } catch {}
+}
+
+function formatDate(ts){
+  if(!ts) return '—';
+  const d = new Date(ts);
+  return d.toLocaleDateString('en-CA', {month:'short', day:'numeric', year:'numeric'});
+}
+
+function timeRemaining(ts){
+  const remaining = NOW_PLAYING_DURATION - (Date.now() - ts);
+  if(remaining <= 0) return null;
+  const mins = Math.ceil(remaining / 60000);
+  return mins > 60 ? `${Math.ceil(mins/60)}h` : `${mins}m`;
+}
+
+function renderNowPlaying(){
+  const np = binData.nowPlaying;
+  const el = document.getElementById('now-playing');
+  if(!np || !timeRemaining(np.startedAt)){
+    el.classList.remove('visible');
+    return;
+  }
+  const r = COLLECTION.find(x => recordKey(x) === np.key);
+  if(!r){ el.classList.remove('visible'); return; }
+
+  el.classList.add('visible');
+  document.getElementById('np-artist').textContent = r.artist;
+  document.getElementById('np-title').textContent = r.title;
+  document.getElementById('np-tracks').textContent = r.tracks;
+
+  const artEl = document.getElementById('np-art');
+  const url = artCache[np.key];
+  if(url) artEl.innerHTML = `<img src="${url}" alt="${r.title}">`;
+  else artEl.innerHTML = `<div class="now-playing-art-placeholder">${vinylSVG}</div>`;
+
+  const rem = timeRemaining(np.startedAt);
+  document.getElementById('np-expires').textContent = rem ? `Playing for ${rem} more` : '';
+
+  // Update every minute
+  setTimeout(renderNowPlaying, 60000);
+}
+
+function updateModalPlayStats(key){
+  const data = binData.listens[key] || {count:0, lastPlayed:null};
+  document.getElementById('play-count').textContent = data.count || '0';
+  document.getElementById('last-played').textContent = formatDate(data.lastPlayed);
+
+  const btn = document.getElementById('play-btn');
+  const isPlaying = binData.nowPlaying?.key === key && timeRemaining(binData.nowPlaying?.startedAt);
+  btn.classList.toggle('active', !!isPlaying);
+}
+
+async function handlePlayButton(){
+  if(!currentModalKey) return;
+  const key = currentModalKey;
+  const btn = document.getElementById('play-btn');
+  btn.disabled = true;
+
+  // Update listen count
+  if(!binData.listens[key]) binData.listens[key] = {count:0, lastPlayed:null};
+  binData.listens[key].count++;
+  binData.listens[key].lastPlayed = Date.now();
+
+  // Set now playing
+  binData.nowPlaying = {key, startedAt: Date.now()};
+
+  await saveBinData();
+  updateModalPlayStats(key);
+  renderNowPlaying();
+  btn.disabled = false;
+}
+
+document.getElementById('play-btn').addEventListener('click', handlePlayButton);
+
+// Load bin data on startup
+loadBinData();
+
 </script>
 </body>
 </html>
