@@ -95,7 +95,29 @@
   .play-stat-value{font-size:.8rem;color:var(--text-mid)}
   @media(max-width:700px){.now-playing-inner{padding:1rem;gap:1rem}.now-playing-art{width:80px;height:80px}.now-playing-title{font-size:1rem}.now-playing-tracks-col{columns:1}.modal-play-section{padding:1rem;gap:1rem}}
   ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
-  @media(max-width:700px){.header-inner{flex-wrap:wrap;height:auto;padding:.75rem 0;gap:.75rem}.site-title{font-size:1.1rem}.sort-controls{order:3;width:100%}.sort-btn{flex:1;text-align:center}.search-wrap{max-width:100%;flex:1}.modal-top{flex-direction:column}.modal-art{width:100%;height:240px;border-radius:6px 6px 0 0}.tracks-content{columns:1}.grid{grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:1rem}.main{padding:1rem}header{padding:0 1rem}}
+  /* ── STOP BUTTON ── */
+  .now-playing-stop{background:none;border:1px solid var(--border);color:var(--text-dim);font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;padding:4px 12px;border-radius:3px;cursor:pointer;transition:all .15s;margin-left:auto;flex-shrink:0;align-self:flex-start}
+  .now-playing-stop:hover{border-color:var(--gold-dim);color:var(--text)}
+  .now-playing-time-left{font-size:.58rem;color:var(--text-dim);letter-spacing:.08em;margin-top:.3rem}
+  /* ── PLAY COOLDOWN ── */
+  .play-btn:disabled{opacity:.4;cursor:not-allowed}
+  .play-btn.cooldown{border-color:var(--border);color:var(--text-dim)}
+  /* ── RANDOM PICK ── */
+  .random-section{display:flex;align-items:center;gap:.75rem;margin-left:auto;flex-shrink:0}
+  .random-btn{background:none;border:1px solid var(--border);color:var(--text-dim);font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;padding:5px 12px;border-radius:3px;cursor:pointer;transition:all .15s;white-space:nowrap;display:flex;align-items:center;gap:.4rem}
+  .random-btn:hover{border-color:var(--gold-dim);color:var(--text)}
+  .random-btn svg{width:12px;height:12px}
+  .random-mode-btn{background:none;border:1px solid var(--border);color:var(--text-dim);font-family:'DM Mono',monospace;font-size:.55rem;letter-spacing:.06em;padding:4px 8px;border-radius:3px;cursor:pointer;transition:all .15s;white-space:nowrap}
+  .random-mode-btn:hover{border-color:var(--gold-dim);color:var(--text)}
+  .random-mode-btn.active{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,.07)}
+  /* ── TOOLBAR ROW ── */
+  .toolbar{max-width:1400px;margin:0 auto;padding:.75rem 2rem .25rem;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+  .toolbar-label{font-size:.58rem;color:var(--text-dim);letter-spacing:.1em;text-transform:uppercase}
+  /* ── DECADE / GENRE DIVIDERS ── */
+  .decade-divider,.genre-divider{grid-column:1/-1;display:flex;align-items:center;gap:1rem;padding:.5rem 0 .25rem}
+  .decade-divider span,.genre-divider span{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--gold);line-height:1;font-style:italic;white-space:nowrap}
+  .decade-divider hr,.genre-divider hr{flex:1;border:none;border-top:1px solid var(--border)}
+  @media(max-width:700px){.header-inner{flex-wrap:wrap;height:auto;padding:.75rem 0;gap:.75rem}.site-title{font-size:1.1rem}.sort-controls{order:3;width:100%}.sort-btn{flex:1;text-align:center}.search-wrap{max-width:100%;flex:1}.modal-top{flex-direction:column}.modal-art{width:100%;height:240px;border-radius:6px 6px 0 0}.tracks-content{columns:1}.grid{grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:1rem}.main{padding:1rem}header{padding:0 1rem}.toolbar{padding:.5rem 1rem}.random-section{margin-left:0;width:100%;justify-content:flex-start}}
 </style>
 </head>
 <body>
@@ -106,8 +128,10 @@
       <div class="now-playing-label"><span class="now-playing-dot"></span>Now Playing</div>
       <div class="now-playing-artist" id="np-artist"></div>
       <div class="now-playing-title" id="np-title"></div>
+      <div class="now-playing-time-left" id="np-time-left"></div>
       <div class="now-playing-tracks now-playing-tracks-col" id="np-tracks"></div>
     </div>
+    <button class="now-playing-stop" id="np-stop">Stop</button>
   </div>
 </div>
 <header>
@@ -118,17 +142,27 @@
     </div>
     <div class="search-wrap">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-      <input type="text" id="search" placeholder="Search artist or title…" autocomplete="off">
+      <input type="text" id="search" placeholder="Search artist, title, genre, year, track…" autocomplete="off">
       <button id="search-clear" style="display:none;position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:1rem;padding:0;line-height:1;">✕</button>
     </div>
     <div class="sort-controls">
       <button class="sort-btn active" data-sort="az">A – Z</button>
       <button class="sort-btn" data-sort="year">Year</button>
       <button class="sort-btn" data-sort="genre">Genre</button>
+      <button class="sort-btn" data-sort="most">Most Played</button>
+      <button class="sort-btn" data-sort="recent">Recent</button>
     </div>
   </div>
 </header>
 <main class="main">
+  <div class="toolbar">
+    <div class="random-section">
+      <button class="random-btn" id="random-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>Pick for me</button>
+      <button class="random-mode-btn active" data-mode="random">Random</button>
+      <button class="random-mode-btn" data-mode="least-recent">Least Recent</button>
+      <button class="random-mode-btn" data-mode="least-played">Least Played</button>
+    </div>
+  </div>
   <div class="no-results" id="no-results">No records found.</div>
   <div class="grid" id="grid"></div>
 </main>
@@ -194,7 +228,7 @@ const COLLECTION=[
 {artist:"George Thorogood and the Destroyers",title:"Bad to the Bone",year:"1982",genre:"Blues Rock",format:"LP",tracks:"Side A:\n1. Bad to the Bone\n2. Madison Blues\n3. Blue Highway\n4. Move It On Over\nSide B:\n5. You Talk Too Much\n6. New Boogie Chillun\n7. Nobody But Me\n8. The Sky Is Crying"},
 {artist:"Green Day",title:"American Idiot",year:"2004",genre:"Punk Rock",format:"2xLP",tracks:"LP1 Side A:\n1. American Idiot\n2. Jesus of Suburbia\nLP1 Side B:\n3. Holiday\n4. Boulevard of Broken Dreams\n5. Are We the Waiting\n6. St. Jimmy\nLP2 Side C:\n7. Give Me Novacaine\n8. She's a Rebel\n9. Extraordinary Girl\n10. Letterbomb\n11. Wake Me Up When September Ends\nLP2 Side D:\n12. Homecoming\n13. Whatsername"},
 {artist:"Jack Johnson",title:"In Between Dreams",year:"2005",genre:"Acoustic/Folk Rock",format:"LP",tracks:"Side A:\n1. Better Together\n2. Never Know\n3. Banana Pancakes\n4. Good People\n5. No Other Way\n6. Sitting, Waiting, Wishing\nSide B:\n7. Staple It Together\n8. Situations\n9. Crying Shame\n10. If I Could\n11. Breakdown\n12. Belle\n13. Do You Remember\n14. Constellations"},
-{artist:"Jack White",title:"Blunderbuss",year:"2012",genre:"Rock/Blues",format:"LP",tracks:"Side A:\n1. Missing Pieces\n2. Sixteen Saltines\n3. Freedom at 21\n4. Love Interruption\n5. Blunderbuss\n6. Hypocritical Kiss\nSide B:\n7. Weep Themselves to Sleep\n8. I Guess I Should Go to Sleep\n9. On and On and On\n10. Two Against One\n11. Trash Tongue Talker\n12. Hip (Eponymous) Poor Boy"},
+{artist:"Jack White",title:"Blunderbuss",year:"2012",genre:"Rock/Blues",format:"LP",tracks:"Side 1:\n1. Missing Pieces\n2. Sixteen Saltines\n3. Freedom at 21\n4. Love Interruption\n5. Blunderbuss\n6. Hypocritical Kiss\n7. Weep Themselves to Sleep\nSide 2:\n8. I'm Shakin'\n9. Trash Tongue Talker\n10. Hip (Eponymous) Poor Boy\n11. I Guess I Should Go to Sleep\n12. On and On and On\n13. Take Me with You When You Go"},
 {artist:"JJ Cale",title:"Troubadour",year:"1976",genre:"Country Rock",format:"LP",tracks:"Side A:\n1. Ride Me High\n2. Cocaine\n3. I'd Like to Love You Baby\n4. You Got Something\n5. Sensitive Kind\n6. Magnolia\nSide B:\n7. Let Me Do It to You\n8. Cycle of Days\n9. Mojo\n10. Bring It On Home\n11. Strung Out\n12. Rock and Roll Records"},
 {artist:"John Lennon",title:"Imagine",year:"1971",genre:"Rock/Pop",format:"LP",tracks:"Side A:\n1. Imagine\n2. Crippled Inside\n3. Jealous Guy\n4. It's So Hard\n5. I Don't Want to Be a Soldier Mama\nSide B:\n6. Give Me Some Truth\n7. Oh My Love\n8. How Do You Sleep?\n9. How?\n10. Oh Yoko!"},
 {artist:"Led Zeppelin",title:"Led Zeppelin III",year:"1970",genre:"Hard Rock",format:"LP",tracks:"Side A:\n1. Immigrant Song\n2. Friends\n3. Celebration Day\n4. Since I've Been Loving You\n5. Out on the Tiles\nSide B:\n6. Gallows Pole\n7. Tangerine\n8. That's the Way\n9. Bron-Y-Aur Stomp\n10. Hats Off to (Roy) Harper"},
@@ -232,7 +266,24 @@ const COLLECTION=[
 {artist:"Zeus",title:"Say Us",year:"2010",genre:"Indie Rock",format:"LP",tracks:"Side A:\n1. Can't Stop Your Hands\n2. Are You Gonna Waste My Time?\n3. Nothing's Wrong\n4. How Does It Feel\n5. The Renegade\nSide B:\n6. You Make Me Wanna Die\n7. If You Want Me To\n8. Walking on the Waters\n9. Marching Through Your Head\n10. Honey I Don't Know Why"},
 ];
 
-// ── ARTWORK via iTunes Search API ────────────────────────────────────────────
+// ── SORT NAME OVERRIDES ─────────────────────────────────────────────────────
+// Solo artists with real names sort by last name; stage names & bands sort as-is
+const SORT_NAME_OVERRIDES = {
+  "Billy Joel":"joel, billy",
+  "Bob Dylan":"dylan, bob",
+  "David Bowie":"bowie, david",
+  "David Wilcox":"wilcox, david",
+  "Eric Clapton":"clapton, eric",
+  "Frank Zappa":"zappa, frank",
+  "Jack Johnson":"johnson, jack",
+  "Jack White":"white, jack",
+  "JJ Cale":"cale, jj",
+  "John Lennon":"lennon, john",
+  "Nat King Cole":"cole, nat king",
+  "Steve Martin":"martin, steve",
+};
+
+// ── ARTWORK ─────────────────────────────────────────────────────────────────
 const artCache = {};
 const artQueue = [];
 let processing = false;
@@ -243,7 +294,10 @@ function recordKey(r){ return r.artist + '|||' + r.title; }
 
 function queueArtwork(r){
   const k = recordKey(r);
-  if(k in artCache) return;
+  // Allow retry for previously failed art (null) — skip only successful loads
+  if(k in artCache && artCache[k] !== null) return;
+  // If null (failed before), remove from cache to allow retry
+  if(artCache[k] === null) delete artCache[k];
   if(!artQueue.find(x => recordKey(x) === k)) artQueue.push(r);
 }
 
@@ -331,9 +385,9 @@ const WIKI_TITLES = {
 async function fetchArtForRecord(r){
   const k = recordKey(r);
   if(k in artCache) return;
-  const wikiTitle = WIKI_TITLES[k];
   const directArt = DIRECT_ART[k];
   if(directArt){ artCache[k]=directArt; return; }
+  const wikiTitle = WIKI_TITLES[k];
   if(!wikiTitle){ artCache[k]=null; return; }
   try {
     const url = `https://en.wikipedia.org/w/api.php?action=query&titles=${wikiTitle}&prop=pageimages&format=json&pithumbsize=400&pilicense=any&origin=*`;
@@ -362,7 +416,6 @@ async function processQueue(){
     newArtFetched = true;
   }
   processing = false;
-  // Save any newly fetched art URLs to bin so future visits skip Wikipedia
   if(newArtFetched){
     if(!binData.artCache) binData.artCache = {};
     let changed = false;
@@ -388,7 +441,6 @@ function updateArtInDOM(){
       slot.replaceWith(fb);
     }
   });
-  // update modal if open
   const mk = document.getElementById('modal').dataset.key;
   if(mk && (mk in artCache)){
     const artEl = document.getElementById('modal-art');
@@ -404,19 +456,44 @@ function updateArtInDOM(){
 let currentSort = 'az';
 let currentSearch = '';
 
-function sortKey(r){ return r.artist.replace(/^the\s+/i,'').replace(/^of\s+/i,'').toLowerCase(); }
+function sortKey(r){
+  const override = SORT_NAME_OVERRIDES[r.artist];
+  if(override) return override;
+  return r.artist.replace(/^the\s+/i,'').replace(/^of\s+/i,'').toLowerCase();
+}
 
 function getFiltered(){
   let list = [...COLLECTION];
   if(currentSearch){
     const q = currentSearch.toLowerCase();
-    list = list.filter(r => r.artist.toLowerCase().includes(q) || r.title.toLowerCase().includes(q));
+    list = list.filter(r =>
+      r.artist.toLowerCase().includes(q) ||
+      r.title.toLowerCase().includes(q) ||
+      r.genre.toLowerCase().includes(q) ||
+      r.year.includes(q) ||
+      r.tracks.toLowerCase().includes(q)
+    );
   }
   if(currentSort==='az') list.sort((a,b) => sortKey(a).localeCompare(sortKey(b)) || a.title.localeCompare(b.title));
-  else if(currentSort==='year') list.sort((a,b) => a.year - b.year || a.artist.localeCompare(b.artist));
-  else list.sort((a,b) => a.genre.localeCompare(b.genre) || sortKey(a).localeCompare(sortKey(b)));
+  else if(currentSort==='year') list.sort((a,b) => a.year - b.year || sortKey(a).localeCompare(sortKey(b)));
+  else if(currentSort==='genre') list.sort((a,b) => a.genre.localeCompare(b.genre) || sortKey(a).localeCompare(sortKey(b)));
+  else if(currentSort==='most'){
+    list.sort((a,b) => {
+      const ca = (binData.listens[recordKey(a)]?.count || 0);
+      const cb = (binData.listens[recordKey(b)]?.count || 0);
+      return cb - ca || sortKey(a).localeCompare(sortKey(b));
+    });
+  } else if(currentSort==='recent'){
+    list.sort((a,b) => {
+      const la = (binData.listens[recordKey(a)]?.lastPlayed || 0);
+      const lb = (binData.listens[recordKey(b)]?.lastPlayed || 0);
+      return lb - la || sortKey(a).localeCompare(sortKey(b));
+    });
+  }
   return list;
 }
+
+function getDecade(year){ return Math.floor(parseInt(year)/10)*10 + 's'; }
 
 function renderGrid(){
   const grid = document.getElementById('grid');
@@ -425,11 +502,17 @@ function renderGrid(){
   const nr = document.getElementById('no-results');
   if(!list.length){ grid.innerHTML=''; nr.style.display='block'; return; }
   nr.style.display='none';
-  let html = '', lastL = null;
+  let html = '', lastDivider = null;
   list.forEach((r, i) => {
     if(currentSort==='az'){
       const L = sortKey(r)[0].toUpperCase();
-      if(L !== lastL){ lastL=L; html += `<div class="letter-divider"><span>${L}</span><hr></div>`; }
+      if(L !== lastDivider){ lastDivider=L; html += `<div class="letter-divider"><span>${L}</span><hr></div>`; }
+    } else if(currentSort==='year'){
+      const d = getDecade(r.year);
+      if(d !== lastDivider){ lastDivider=d; html += `<div class="decade-divider"><span>${d}</span><hr></div>`; }
+    } else if(currentSort==='genre'){
+      const g = r.genre;
+      if(g !== lastDivider){ lastDivider=g; html += `<div class="genre-divider"><span>${g}</span><hr></div>`; }
     }
     const k = recordKey(r);
     const url = artCache[k];
@@ -510,10 +593,24 @@ const BIN_ID = '69c1df91c3097a1dd552e9e4';
 const API_KEY = '$2a$10$vwgLpB3phbOMxVxvG0g5RusRNeT/ct9Y0Uno9.zA3v4EfjJyP0t6.';
 const BIN_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
 const HEADERS = {'Content-Type':'application/json','X-Master-Key':API_KEY,'X-Bin-Meta':'false'};
-const NOW_PLAYING_DURATION = 60 * 60 * 1000; // 1 hour in ms
+
+// Format-based durations in ms
+const FORMAT_DURATION = {
+  'LP': 60 * 60 * 1000,
+  '2xLP': 120 * 60 * 1000,
+  '12" Single': 20 * 60 * 1000,
+  '12" EP': 30 * 60 * 1000,
+};
+const DEFAULT_DURATION = 60 * 60 * 1000;
+
+function getDuration(r){
+  if(!r) return DEFAULT_DURATION;
+  return FORMAT_DURATION[r.format] || DEFAULT_DURATION;
+}
 
 let binData = {listens:{}, nowPlaying:null};
 let currentModalKey = null;
+let npTimerInterval = null;
 
 async function loadBinData(){
   try {
@@ -522,11 +619,10 @@ async function loadBinData(){
     binData = await res.json();
     if(!binData.listens) binData.listens = {};
     if(!binData.artCache) binData.artCache = {};
-    // Seed artCache from saved URLs — skips Wikipedia for known albums
     Object.entries(binData.artCache).forEach(([k,v]) => { artCache[k] = v; });
   } catch { binData = {listens:{}, nowPlaying:null, artCache:{}}; }
   renderNowPlaying();
-  renderGrid(); // Re-render now that cached art is available
+  renderGrid();
 }
 
 async function saveBinData(){
@@ -541,17 +637,22 @@ function formatDate(ts){
   return d.toLocaleDateString('en-CA', {month:'short', day:'numeric', year:'numeric'});
 }
 
-function timeRemaining(ts){
-  const remaining = NOW_PLAYING_DURATION - (Date.now() - ts);
+function timeRemaining(np){
+  if(!np) return null;
+  const r = COLLECTION.find(x => recordKey(x) === np.key);
+  const duration = getDuration(r);
+  const remaining = duration - (Date.now() - np.startedAt);
   if(remaining <= 0) return null;
   const mins = Math.ceil(remaining / 60000);
-  return mins > 60 ? `${Math.ceil(mins/60)}h` : `${mins}m`;
+  return mins > 60 ? `${Math.floor(mins/60)}h ${mins%60}m left` : `${mins}m left`;
 }
 
 function renderNowPlaying(){
   const np = binData.nowPlaying;
   const el = document.getElementById('now-playing');
-  if(!np || !timeRemaining(np.startedAt)){
+  if(npTimerInterval){ clearInterval(npTimerInterval); npTimerInterval = null; }
+
+  if(!np || !timeRemaining(np)){
     el.classList.remove('visible');
     return;
   }
@@ -562,11 +663,21 @@ function renderNowPlaying(){
   document.getElementById('np-artist').textContent = r.artist;
   document.getElementById('np-title').textContent = r.title;
   document.getElementById('np-tracks').textContent = r.tracks;
+  document.getElementById('np-time-left').textContent = timeRemaining(np);
 
   updateNowPlayingArt(np.key, r);
 
-  // Check every minute if the hour has expired
-  setTimeout(renderNowPlaying, 60000);
+  // Update time remaining every minute
+  npTimerInterval = setInterval(() => {
+    const tr = timeRemaining(binData.nowPlaying);
+    if(!tr){
+      el.classList.remove('visible');
+      clearInterval(npTimerInterval);
+      npTimerInterval = null;
+    } else {
+      document.getElementById('np-time-left').textContent = tr;
+    }
+  }, 60000);
 }
 
 function updateNowPlayingArt(key, r){
@@ -578,7 +689,6 @@ function updateNowPlayingArt(key, r){
   } else if(url === null){
     artEl.innerHTML = `<div class="now-playing-art-placeholder">${vinylSVG}</div>`;
   } else {
-    // Art not loaded yet — show placeholder and retry once art loads
     artEl.innerHTML = `<div class="now-playing-art-placeholder">${vinylSVG}</div>`;
     const interval = setInterval(() => {
       const loaded = artCache[key];
@@ -590,37 +700,102 @@ function updateNowPlayingArt(key, r){
   }
 }
 
+// ── STOP NOW PLAYING ──
+document.getElementById('np-stop').addEventListener('click', async () => {
+  binData.nowPlaying = null;
+  renderNowPlaying();
+  // Update modal if open
+  if(currentModalKey) updateModalPlayStats(currentModalKey);
+  await saveBinData();
+});
+
 function updateModalPlayStats(key){
   const data = binData.listens[key] || {count:0, lastPlayed:null};
   document.getElementById('play-count').textContent = data.count || '0';
   document.getElementById('last-played').textContent = formatDate(data.lastPlayed);
 
   const btn = document.getElementById('play-btn');
-  const isPlaying = binData.nowPlaying?.key === key && timeRemaining(binData.nowPlaying?.startedAt);
+  const isPlaying = binData.nowPlaying?.key === key && timeRemaining(binData.nowPlaying);
   btn.classList.toggle('active', !!isPlaying);
 }
 
+// ── PLAY BUTTON WITH COOLDOWN ──
+let playCooldown = false;
+
 async function handlePlayButton(){
-  if(!currentModalKey) return;
+  if(!currentModalKey || playCooldown) return;
   const key = currentModalKey;
   const btn = document.getElementById('play-btn');
+
+  // Cooldown: disable for 5 seconds to prevent accidental double-taps
+  playCooldown = true;
   btn.disabled = true;
+  btn.classList.add('cooldown');
 
   // Update listen count
   if(!binData.listens[key]) binData.listens[key] = {count:0, lastPlayed:null};
   binData.listens[key].count++;
   binData.listens[key].lastPlayed = Date.now();
 
-  // Set now playing
+  // Set now playing (overrides any currently playing record)
   binData.nowPlaying = {key, startedAt: Date.now()};
 
   await saveBinData();
   updateModalPlayStats(key);
   renderNowPlaying();
-  btn.disabled = false;
+
+  setTimeout(() => {
+    playCooldown = false;
+    btn.disabled = false;
+    btn.classList.remove('cooldown');
+  }, 5000);
 }
 
 document.getElementById('play-btn').addEventListener('click', handlePlayButton);
+
+// ── RANDOM PICK ──
+let randomMode = 'random';
+
+document.querySelectorAll('.random-mode-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.random-mode-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    randomMode = btn.dataset.mode;
+  });
+});
+
+document.getElementById('random-btn').addEventListener('click', () => {
+  const list = getFiltered();
+  if(!list.length) return;
+
+  let pick;
+  if(randomMode === 'random'){
+    pick = list[Math.floor(Math.random() * list.length)];
+  } else if(randomMode === 'least-recent'){
+    // Sort by last played ascending (never played = 0 = first)
+    const sorted = [...list].sort((a,b) => {
+      const la = binData.listens[recordKey(a)]?.lastPlayed || 0;
+      const lb = binData.listens[recordKey(b)]?.lastPlayed || 0;
+      return la - lb;
+    });
+    // Pick randomly from the bottom 25%
+    const pool = sorted.slice(0, Math.max(1, Math.ceil(sorted.length * 0.25)));
+    pick = pool[Math.floor(Math.random() * pool.length)];
+  } else if(randomMode === 'least-played'){
+    const sorted = [...list].sort((a,b) => {
+      const ca = binData.listens[recordKey(a)]?.count || 0;
+      const cb = binData.listens[recordKey(b)]?.count || 0;
+      return ca - cb;
+    });
+    const pool = sorted.slice(0, Math.max(1, Math.ceil(sorted.length * 0.25)));
+    pick = pool[Math.floor(Math.random() * pool.length)];
+  }
+
+  if(pick){
+    const idx = list.indexOf(pick);
+    openModal(idx);
+  }
+});
 
 // Load bin data on startup
 loadBinData();
