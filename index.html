@@ -119,6 +119,7 @@
     <div class="search-wrap">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
       <input type="text" id="search" placeholder="Search artist or title…" autocomplete="off">
+      <button id="search-clear" style="display:none;position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:1rem;padding:0;line-height:1;">✕</button>
     </div>
     <div class="sort-controls">
       <button class="sort-btn active" data-sort="az">A – Z</button>
@@ -161,7 +162,7 @@ const COLLECTION=[
 {artist:"Arcade Fire",title:"Reflektor",year:"2013",genre:"Indie Rock",format:"2xLP",tracks:"LP1 Side A:\n1. Reflektor\n2. Flashbulb Eyes\n3. Here Comes the Night Time\n4. We Exist\nLP1 Side B:\n5. Normal Person\n6. You Already Know\n7. Joan of Arc\nLP2 Side C:\n8. Here Comes the Night Time II\n9. Awful Sound (Oh Eurydice)\n10. It's Never Over (Hey Orpheus)\nLP2 Side D:\n11. Porno\n12. Afterlife\n13. Supersymmetry"},
 {artist:"Bahamas",title:"Bahamas Is Afie",year:"2014",genre:"Folk Rock",format:"LP",tracks:"Side A:\n1. Waves\n2. Can't Take You with Me\n3. Bitter Memories\n4. All the Time\n5. Stronger Than That\n6. Half Mine\nSide B:\n7. All Time Favourite\n8. Like a Wind\n9. Nothing to Me Now\n10. Little Record Girl\n11. I Had It All\n12. All I've Ever Known"},
 {artist:"The Band",title:"Northern Lights Southern Cross",year:"1975",genre:"Rock",format:"LP",tracks:"Side A:\n1. Forbidden Fruit\n2. Hobo Jungle\n3. Ophelia\n4. Acadian Driftwood\nSide B:\n5. Ring Your Bell\n6. It Makes No Difference\n7. Jupiter Hollow\n8. Rags and Bones"},
-{artist:"The Beach Boys",title:"Endless Summer",year:"1974",genre:"Pop/Rock",format:"2xLP",tracks:"Side A:\n1. Surfin' Safari\n2. Surfer Girl\n3. Catch a Wave\n4. The Warmth of the Sun\n5. Surfin' U.S.A.\nSide B:\n6. Be True to Your School\n7. Little Deuce Coupe\n8. In My Room\n9. Shut Down\n10. Fun, Fun, Fun\nSide C:\n11. I Get Around\n12. Girls on the Beach\n13. Wendy\n14. Let Him Run Wild\n15. Don't Worry Baby\nSide D:\n16. California Girls\n17. Girl Don't Tell Me\n18. Help Me, Ronda\n19. You're So Good to Me\n20. Good Vibrations"},
+{artist:"The Beach Boys",title:"Endless Summer",year:"1974",genre:"Pop/Rock",format:"2xLP",tracks:"Side One:\n1. Surfin' Safari\n2. Surfer Girl\n3. Catch a Wave\n4. The Warmth of the Sun\n5. Surfin' U.S.A.\nSide Two:\n1. Be True to Your School\n2. Little Deuce Coupe\n3. In My Room\n4. Shut Down\n5. Fun, Fun, Fun\nSide Three:\n1. I Get Around\n2. The Girls on the Beach\n3. Wendy\n4. Let Him Run Wild\n5. Don't Worry Baby\nSide Four:\n1. California Girls\n2. Girl Don't Tell Me\n3. Help Me, Rhonda\n4. You're So Good to Me\n5. All Summer Long"},
 {artist:"The Beatles",title:"1962-1966",year:"1973",genre:"Rock/Pop",format:"2xLP",tracks:"LP1 Side A:\n1. Love Me Do\n2. Please Please Me\n3. From Me to You\n4. She Loves You\n5. I Want to Hold Your Hand\n6. All My Loving\n7. Can't Buy Me Love\nLP1 Side B:\n8. A Hard Day's Night\n9. And I Love Her\n10. Eight Days a Week\n11. I Feel Fine\n12. Ticket to Ride\n13. Yesterday\nLP2 Side C:\n14. Help!\n15. You've Got to Hide Your Love Away\n16. We Can Work It Out\n17. Day Tripper\n18. Drive My Car\n19. Norwegian Wood (This Bird Has Flown)\nLP2 Side D:\n20. Nowhere Man\n21. Michelle\n22. In My Life\n23. Girl\n24. Paperback Writer\n25. Eleanor Rigby\n26. Yellow Submarine"},
 {artist:"The Beatles",title:"1967-1970",year:"1973",genre:"Rock/Pop",format:"2xLP",tracks:"LP1 Side A:\n1. Strawberry Fields Forever\n2. Penny Lane\n3. Sgt. Pepper's Lonely Hearts Club Band\n4. With a Little Help from My Friends\n5. Lucy in the Sky with Diamonds\n6. A Day in the Life\n7. All You Need Is Love\nLP1 Side B:\n8. I Am the Walrus\n9. Hello Goodbye\n10. The Fool on the Hill\n11. Magical Mystery Tour\n12. Lady Madonna\n13. Hey Jude\n14. Revolution\nLP2 Side C:\n15. Back in the U.S.S.R.\n16. While My Guitar Gently Weeps\n17. Ob-La-Di, Ob-La-Da\n18. Get Back\n19. Don't Let Me Down\n20. The Ballad of John and Yoko\n21. Old Brown Shoe\nLP2 Side D:\n22. Here Comes the Sun\n23. Come Together\n24. Something\n25. Octopus's Garden\n26. Let It Be\n27. Across the Universe\n28. The Long and Winding Road"},
 {artist:"The Beatles",title:"Abbey Road",year:"1969",genre:"Rock",format:"LP",tracks:"Side A:\n1. Come Together\n2. Something\n3. Maxwell's Silver Hammer\n4. Oh! Darling\n5. Octopus's Garden\n6. I Want You (She's So Heavy)\nSide B:\n7. Here Comes the Sun\n8. Because\n9. You Never Give Me Your Money\n10. Sun King\n11. Mean Mr. Mustard\n12. Polythene Pam\n13. She Came In Through the Bathroom Window\n14. Golden Slumbers\n15. Carry That Weight\n16. The End\n17. Her Majesty"},
@@ -481,7 +482,20 @@ function closeModal(){
 document.getElementById('modal-close').addEventListener('click', closeModal);
 document.getElementById('modal-overlay').addEventListener('click', e => { if(e.target===document.getElementById('modal-overlay')) closeModal(); });
 document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); });
-document.getElementById('search').addEventListener('input', e => { currentSearch=e.target.value.trim(); renderGrid(); });
+const searchEl = document.getElementById('search');
+const clearBtn = document.getElementById('search-clear');
+searchEl.addEventListener('input', e => {
+  currentSearch = e.target.value.trim();
+  clearBtn.style.display = currentSearch ? 'block' : 'none';
+  renderGrid();
+});
+clearBtn.addEventListener('click', () => {
+  searchEl.value = '';
+  currentSearch = '';
+  clearBtn.style.display = 'none';
+  searchEl.focus();
+  renderGrid();
+});
 document.querySelectorAll('.sort-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
