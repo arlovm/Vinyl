@@ -95,29 +95,7 @@
   .play-stat-value{font-size:.8rem;color:var(--text-mid)}
   @media(max-width:700px){.now-playing-inner{padding:1rem;gap:1rem}.now-playing-art{width:80px;height:80px}.now-playing-title{font-size:1rem}.now-playing-tracks-col{columns:1}.modal-play-section{padding:1rem;gap:1rem}}
   ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
-  /* ── STOP BUTTON ── */
-  .now-playing-stop{background:none;border:1px solid var(--border);color:var(--text-dim);font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;padding:4px 12px;border-radius:3px;cursor:pointer;transition:all .15s;margin-left:auto;flex-shrink:0;align-self:flex-start}
-  .now-playing-stop:hover{border-color:var(--gold-dim);color:var(--text)}
-  .now-playing-time-left{font-size:.58rem;color:var(--text-dim);letter-spacing:.08em;margin-top:.3rem}
-  /* ── PLAY COOLDOWN ── */
-  .play-btn:disabled{opacity:.4;cursor:not-allowed}
-  .play-btn.cooldown{border-color:var(--border);color:var(--text-dim)}
-  /* ── RANDOM PICK ── */
-  .random-section{display:flex;align-items:center;gap:.75rem;margin-left:auto;flex-shrink:0}
-  .random-btn{background:none;border:1px solid var(--border);color:var(--text-dim);font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;padding:5px 12px;border-radius:3px;cursor:pointer;transition:all .15s;white-space:nowrap;display:flex;align-items:center;gap:.4rem}
-  .random-btn:hover{border-color:var(--gold-dim);color:var(--text)}
-  .random-btn svg{width:12px;height:12px}
-  .random-mode-btn{background:none;border:1px solid var(--border);color:var(--text-dim);font-family:'DM Mono',monospace;font-size:.55rem;letter-spacing:.06em;padding:4px 8px;border-radius:3px;cursor:pointer;transition:all .15s;white-space:nowrap}
-  .random-mode-btn:hover{border-color:var(--gold-dim);color:var(--text)}
-  .random-mode-btn.active{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,.07)}
-  /* ── TOOLBAR ROW ── */
-  .toolbar{max-width:1400px;margin:0 auto;padding:.75rem 2rem .25rem;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
-  .toolbar-label{font-size:.58rem;color:var(--text-dim);letter-spacing:.1em;text-transform:uppercase}
-  /* ── DECADE / GENRE DIVIDERS ── */
-  .decade-divider,.genre-divider{grid-column:1/-1;display:flex;align-items:center;gap:1rem;padding:.5rem 0 .25rem}
-  .decade-divider span,.genre-divider span{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--gold);line-height:1;font-style:italic;white-space:nowrap}
-  .decade-divider hr,.genre-divider hr{flex:1;border:none;border-top:1px solid var(--border)}
-  @media(max-width:700px){.header-inner{flex-wrap:wrap;height:auto;padding:.75rem 0;gap:.75rem}.site-title{font-size:1.1rem}.sort-controls{order:3;width:100%}.sort-btn{flex:1;text-align:center}.search-wrap{max-width:100%;flex:1}.modal-top{flex-direction:column}.modal-art{width:100%;height:240px;border-radius:6px 6px 0 0}.tracks-content{columns:1}.grid{grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:1rem}.main{padding:1rem}header{padding:0 1rem}.toolbar{padding:.5rem 1rem}.random-section{margin-left:0;width:100%;justify-content:flex-start}}
+  @media(max-width:700px){.header-inner{flex-wrap:wrap;height:auto;padding:.75rem 0;gap:.75rem}.site-title{font-size:1.1rem}.sort-controls{order:3;width:100%}.sort-btn{flex:1;text-align:center}.search-wrap{max-width:100%;flex:1}.modal-top{flex-direction:column}.modal-art{width:100%;height:240px;border-radius:6px 6px 0 0}.tracks-content{columns:1}.grid{grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:1rem}.main{padding:1rem}header{padding:0 1rem}}
 </style>
 </head>
 <body>
@@ -128,10 +106,8 @@
       <div class="now-playing-label"><span class="now-playing-dot"></span>Now Playing</div>
       <div class="now-playing-artist" id="np-artist"></div>
       <div class="now-playing-title" id="np-title"></div>
-      <div class="now-playing-time-left" id="np-time-left"></div>
       <div class="now-playing-tracks now-playing-tracks-col" id="np-tracks"></div>
     </div>
-    <button class="now-playing-stop" id="np-stop">Stop</button>
   </div>
 </div>
 <header>
@@ -142,27 +118,17 @@
     </div>
     <div class="search-wrap">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-      <input type="text" id="search" placeholder="Search artist, title, genre, year, track…" autocomplete="off">
+      <input type="text" id="search" placeholder="Search artist or title…" autocomplete="off">
       <button id="search-clear" style="display:none;position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:1rem;padding:0;line-height:1;">✕</button>
     </div>
     <div class="sort-controls">
       <button class="sort-btn active" data-sort="az">A – Z</button>
       <button class="sort-btn" data-sort="year">Year</button>
       <button class="sort-btn" data-sort="genre">Genre</button>
-      <button class="sort-btn" data-sort="most">Most Played</button>
-      <button class="sort-btn" data-sort="recent">Recent</button>
     </div>
   </div>
 </header>
 <main class="main">
-  <div class="toolbar">
-    <div class="random-section">
-      <button class="random-btn" id="random-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>Pick for me</button>
-      <button class="random-mode-btn active" data-mode="random">Random</button>
-      <button class="random-mode-btn" data-mode="least-recent">Least Recent</button>
-      <button class="random-mode-btn" data-mode="least-played">Least Played</button>
-    </div>
-  </div>
   <div class="no-results" id="no-results">No records found.</div>
   <div class="grid" id="grid"></div>
 </main>
@@ -193,9 +159,10 @@
 <script>
 const COLLECTION=[
 {artist:"AC/DC",title:"Dirty Deeds Done Dirt Cheap",year:"1976",genre:"Hard Rock",format:"LP",tracks:"Side A:\n1. Dirty Deeds Done Dirt Cheap\n2. Love at First Feel\n3. Big Balls\n4. Rocker\n5. Problem Child\nSide B:\n6. There's Gonna Be Some Rockin'\n7. Ain't No Fun (Waiting Round to Be a Millionaire)\n8. Ride On\n9. Squealer"},
+{artist:"America",title:"America",year:"1972",genre:"Folk Rock",format:"LP",tracks:"Side A:\n1. Riverside\n2. Sandman\n3. Three Roses\n4. Children\n5. A Horse with No Name\n6. Here\nSide B:\n7. I Need You\n8. Rainy Day\n9. Never Found the Time\n10. Clarice\n11. Donkey Jaw\n12. Pigeon Song"},
 {artist:"Arcade Fire",title:"Reflektor",year:"2013",genre:"Indie Rock",format:"2xLP",tracks:"LP1 Side A:\n1. Reflektor\n2. Flashbulb Eyes\n3. Here Comes the Night Time\n4. We Exist\nLP1 Side B:\n5. Normal Person\n6. You Already Know\n7. Joan of Arc\nLP2 Side C:\n8. Here Comes the Night Time II\n9. Awful Sound (Oh Eurydice)\n10. It's Never Over (Hey Orpheus)\nLP2 Side D:\n11. Porno\n12. Afterlife\n13. Supersymmetry"},
 {artist:"Bahamas",title:"Bahamas Is Afie",year:"2014",genre:"Folk Rock",format:"LP",tracks:"Side A:\n1. Waves\n2. Can't Take You with Me\n3. Bitter Memories\n4. All the Time\n5. Stronger Than That\n6. Half Mine\nSide B:\n7. All Time Favourite\n8. Like a Wind\n9. Nothing to Me Now\n10. Little Record Girl\n11. I Had It All\n12. All I've Ever Known"},
-{artist:"The Band",title:"Northern Lights Southern Cross",year:"1975",genre:"Rock",format:"LP",tracks:"Side A:\n1. Forbidden Fruit\n2. Hobo Jungle\n3. Ophelia\n4. Acadian Driftwood\nSide B:\n5. Ring Your Bell\n6. It Makes No Difference\n7. Jupiter Hollow\n8. Rags and Bones"},
+{artist:"The Band",title:"Northern Lights Southern Cross",year:"1975",genre:"Rock",format:"LP",tracks:"1. Rags & Bones\n2. Acadian Driftwood\n3. Ophelia\n4. Hobo Jungle\n5. It Makes No Difference\n6. Forbidden Fruit\n7. Ring Your Bell\n8. Jupiter Hollow"},
 {artist:"The Beach Boys",title:"Endless Summer",year:"1974",genre:"Pop/Rock",format:"2xLP",tracks:"Side One:\n1. Surfin' Safari\n2. Surfer Girl\n3. Catch a Wave\n4. The Warmth of the Sun\n5. Surfin' U.S.A.\nSide Two:\n1. Be True to Your School\n2. Little Deuce Coupe\n3. In My Room\n4. Shut Down\n5. Fun, Fun, Fun\nSide Three:\n1. I Get Around\n2. The Girls on the Beach\n3. Wendy\n4. Let Him Run Wild\n5. Don't Worry Baby\nSide Four:\n1. California Girls\n2. Girl Don't Tell Me\n3. Help Me, Rhonda\n4. You're So Good to Me\n5. All Summer Long"},
 {artist:"The Beatles",title:"1962-1966",year:"1973",genre:"Rock/Pop",format:"2xLP",tracks:"LP1 Side A:\n1. Love Me Do\n2. Please Please Me\n3. From Me to You\n4. She Loves You\n5. I Want to Hold Your Hand\n6. All My Loving\n7. Can't Buy Me Love\nLP1 Side B:\n8. A Hard Day's Night\n9. And I Love Her\n10. Eight Days a Week\n11. I Feel Fine\n12. Ticket to Ride\n13. Yesterday\nLP2 Side C:\n14. Help!\n15. You've Got to Hide Your Love Away\n16. We Can Work It Out\n17. Day Tripper\n18. Drive My Car\n19. Norwegian Wood (This Bird Has Flown)\nLP2 Side D:\n20. Nowhere Man\n21. Michelle\n22. In My Life\n23. Girl\n24. Paperback Writer\n25. Eleanor Rigby\n26. Yellow Submarine"},
 {artist:"The Beatles",title:"1967-1970",year:"1973",genre:"Rock/Pop",format:"2xLP",tracks:"LP1 Side A:\n1. Strawberry Fields Forever\n2. Penny Lane\n3. Sgt. Pepper's Lonely Hearts Club Band\n4. With a Little Help from My Friends\n5. Lucy in the Sky with Diamonds\n6. A Day in the Life\n7. All You Need Is Love\nLP1 Side B:\n8. I Am the Walrus\n9. Hello Goodbye\n10. The Fool on the Hill\n11. Magical Mystery Tour\n12. Lady Madonna\n13. Hey Jude\n14. Revolution\nLP2 Side C:\n15. Back in the U.S.S.R.\n16. While My Guitar Gently Weeps\n17. Ob-La-Di, Ob-La-Da\n18. Get Back\n19. Don't Let Me Down\n20. The Ballad of John and Yoko\n21. Old Brown Shoe\nLP2 Side D:\n22. Here Comes the Sun\n23. Come Together\n24. Something\n25. Octopus's Garden\n26. Let It Be\n27. Across the Universe\n28. The Long and Winding Road"},
@@ -204,6 +171,7 @@ const COLLECTION=[
 {artist:"The Beatles",title:"Let It Be",year:"1970",genre:"Rock",format:"LP",tracks:"Side A:\n1. Two of Us\n2. Dig a Pony\n3. Across the Universe\n4. I Me Mine\n5. Dig It\n6. Let It Be\n7. Maggie Mae\nSide B:\n8. I've Got a Feeling\n9. One After 909\n10. The Long and Winding Road\n11. For You Blue\n12. Get Back"},
 {artist:"The Beatles",title:"The Beatles",year:"1968",genre:"Rock",format:"2xLP",tracks:"LP1 Side A:\n1. Back in the U.S.S.R.\n2. Dear Prudence\n3. Glass Onion\n4. Ob-La-Di, Ob-La-Da\n5. Wild Honey Pie\n6. The Continuing Story of Bungalow Bill\n7. While My Guitar Gently Weeps\n8. Happiness Is a Warm Gun\nLP1 Side B:\n9. Martha My Dear\n10. I'm So Tired\n11. Blackbird\n12. Piggies\n13. Rocky Raccoon\n14. Don't Pass Me By\n15. Why Don't We Do It in the Road?\n16. I Will\n17. Julia\nLP2 Side C:\n18. Birthday\n19. Yer Blues\n20. Mother Nature's Son\n21. Everybody's Got Something to Hide Except Me and My Monkey\n22. Sexy Sadie\n23. Helter Skelter\n24. Long, Long, Long\nLP2 Side D:\n25. Revolution 1\n26. Honey Pie\n27. Savoy Truffle\n28. Cry Baby Cry\n29. Revolution 9\n30. Good Night"},
 {artist:"Bert Kaempfert",title:"Christmas Wonderland",year:"1964",genre:"Easy Listening/Christmas",format:"LP",tracks:"Side A:\n1. White Christmas\n2. Winter Wonderland\n3. Jingle Bells\n4. Deck the Halls\n5. O Christmas Tree\n6. Have Yourself a Merry Little Christmas\nSide B:\n7. Silent Night\n8. O Come All Ye Faithful\n9. The First Noel\n10. Away in a Manger\n11. God Rest Ye Merry Gentlemen\n12. Hark! The Herald Angels Sing"},
+{artist:"Billie Eilish",title:"When We All Fall Asleep, Where Do We Go?",year:"2019",genre:"Pop",format:"LP",tracks:"Side A:\n1. !!!!!!!\n2. bad guy\n3. xanny\n4. you should see me in a crown\n5. all the good girls go to hell\n6. wish you were gay\n7. when the party\'s over\nSide B:\n8. 8\n9. my strange addiction\n10. bury a friend\n11. ilomilo\n12. listen before i go\n13. i love you\n14. goodbye"},
 {artist:"Billy Joel",title:"Greatest Hits Volume I & Volume II",year:"1985",genre:"Pop/Rock",format:"2xLP",tracks:"LP1 Side A:\n1. Piano Man\n2. Say Goodbye to Hollywood\n3. The Stranger\n4. Just the Way You Are\nLP1 Side B:\n5. Scenes from an Italian Restaurant\n6. Vienna\n7. She's Always a Woman\n8. She's Got a Way\nLP2 Side C:\n9. Don't Ask Me Why\n10. It's Still Rock and Roll to Me\n11. You May Be Right\n12. Sometimes a Fantasy\nLP2 Side D:\n13. Pressure\n14. Allentown\n15. Goodnight Saigon\n16. Big Shot"},
 {artist:"The Black Keys",title:"Brothers",year:"2010",genre:"Blues Rock",format:"2xLP",tracks:"Side A:\n1. Everlasting Light\n2. Next Girl\n3. Tighten Up\n4. Howlin' for You\n5. She's Long Gone\nSide B:\n6. Black Mud\n7. The Only One\n8. Too Afraid to Love You\n9. Ten Cent Pistol\nSide C:\n10. Sinister Kid\n11. The Go Getter\n12. I'm Not the One\nSide D:\n13. Unknown Brother\n14. Never Give You Up\n15. These Days\n16. Unforgiven"},
 {artist:"Bob and Doug McKenzie",title:"The Great White North",year:"1981",genre:"Comedy",format:"LP",tracks:"Side A:\n1. Take Off\n2. How to Eat a Beaver Tail\n3. Bob and Doug McKenzie on Air\n4. Twelve Days of Christmas\nSide B:\n5. Hosers in Love\n6. The Beer Hunter\n7. Bob and Doug Meet the Queen\n8. Strange Brew"},
@@ -227,11 +195,14 @@ const COLLECTION=[
 {artist:"Frank Zappa",title:"You Are What You Is",year:"1981",genre:"Rock",format:"2xLP",tracks:"LP1 Side A:\n1. Teen-Age Wind\n2. Harder Than Your Husband\n3. Doreen\n4. Goblin Girl\nLP1 Side B:\n5. Society Pages\n6. I'm a Beautiful Guy\n7. Beauty Knows No Pain\n8. Charlie's Enormous Mouth\nLP2 Side C:\n9. Conehead\n10. You Are What You Is\n11. Mudd Club\n12. The Meek Shall Inherit Nothing\nLP2 Side D:\n13. Suicide Chump\n14. Jumbo Go Away\n15. If Only She Woulda\n16. Drafted Again"},
 {artist:"George Thorogood and the Destroyers",title:"Bad to the Bone",year:"1982",genre:"Blues Rock",format:"LP",tracks:"Side A:\n1. Bad to the Bone\n2. Madison Blues\n3. Blue Highway\n4. Move It On Over\nSide B:\n5. You Talk Too Much\n6. New Boogie Chillun\n7. Nobody But Me\n8. The Sky Is Crying"},
 {artist:"Green Day",title:"American Idiot",year:"2004",genre:"Punk Rock",format:"2xLP",tracks:"LP1 Side A:\n1. American Idiot\n2. Jesus of Suburbia\nLP1 Side B:\n3. Holiday\n4. Boulevard of Broken Dreams\n5. Are We the Waiting\n6. St. Jimmy\nLP2 Side C:\n7. Give Me Novacaine\n8. She's a Rebel\n9. Extraordinary Girl\n10. Letterbomb\n11. Wake Me Up When September Ends\nLP2 Side D:\n12. Homecoming\n13. Whatsername"},
+{artist:"Harry Styles",title:"Harry\'s House",year:"2022",genre:"Pop/Rock",format:"LP",tracks:"Side A:\n1. Music for a Sushi Restaurant\n2. Late Night Talking\n3. Grapejuice\n4. As It Was\n5. Daylight\n6. Little Freak\n7. Matilda\nSide B:\n8. Cinema\n9. Daydreaming\n10. Keep Driving\n11. Satellite\n12. Boyfriends\n13. Love of My Life"},
 {artist:"Jack Johnson",title:"In Between Dreams",year:"2005",genre:"Acoustic/Folk Rock",format:"LP",tracks:"Side A:\n1. Better Together\n2. Never Know\n3. Banana Pancakes\n4. Good People\n5. No Other Way\n6. Sitting, Waiting, Wishing\nSide B:\n7. Staple It Together\n8. Situations\n9. Crying Shame\n10. If I Could\n11. Breakdown\n12. Belle\n13. Do You Remember\n14. Constellations"},
-{artist:"Jack White",title:"Blunderbuss",year:"2012",genre:"Rock/Blues",format:"LP",tracks:"Side 1:\n1. Missing Pieces\n2. Sixteen Saltines\n3. Freedom at 21\n4. Love Interruption\n5. Blunderbuss\n6. Hypocritical Kiss\n7. Weep Themselves to Sleep\nSide 2:\n8. I'm Shakin'\n9. Trash Tongue Talker\n10. Hip (Eponymous) Poor Boy\n11. I Guess I Should Go to Sleep\n12. On and On and On\n13. Take Me with You When You Go"},
+{artist:"Jack White",title:"Blunderbuss",year:"2012",genre:"Rock/Blues",format:"LP",tracks:"Side A:\n1. Missing Pieces\n2. Sixteen Saltines\n3. Freedom at 21\n4. Love Interruption\n5. Blunderbuss\n6. Hypocritical Kiss\nSide B:\n7. Weep Themselves to Sleep\n8. I Guess I Should Go to Sleep\n9. On and On and On\n10. Two Against One\n11. Trash Tongue Talker\n12. Hip (Eponymous) Poor Boy"},
 {artist:"JJ Cale",title:"Troubadour",year:"1976",genre:"Country Rock",format:"LP",tracks:"Side A:\n1. Ride Me High\n2. Cocaine\n3. I'd Like to Love You Baby\n4. You Got Something\n5. Sensitive Kind\n6. Magnolia\nSide B:\n7. Let Me Do It to You\n8. Cycle of Days\n9. Mojo\n10. Bring It On Home\n11. Strung Out\n12. Rock and Roll Records"},
 {artist:"John Lennon",title:"Imagine",year:"1971",genre:"Rock/Pop",format:"LP",tracks:"Side A:\n1. Imagine\n2. Crippled Inside\n3. Jealous Guy\n4. It's So Hard\n5. I Don't Want to Be a Soldier Mama\nSide B:\n6. Give Me Some Truth\n7. Oh My Love\n8. How Do You Sleep?\n9. How?\n10. Oh Yoko!"},
+{artist:"Led Zeppelin",title:"In Through the Out Door",year:"1979",genre:"Hard Rock",format:"LP",tracks:"Side A:\n1. In the Evening\n2. South Bound Saurez\n3. Fool in the Rain\n4. Hot Dog\nSide B:\n5. Carouselambra\n6. All My Love\n7. I'm Gonna Crawl"},
 {artist:"Led Zeppelin",title:"Led Zeppelin III",year:"1970",genre:"Hard Rock",format:"LP",tracks:"Side A:\n1. Immigrant Song\n2. Friends\n3. Celebration Day\n4. Since I've Been Loving You\n5. Out on the Tiles\nSide B:\n6. Gallows Pole\n7. Tangerine\n8. That's the Way\n9. Bron-Y-Aur Stomp\n10. Hats Off to (Roy) Harper"},
+{artist:"Mariah Carey",title:"Mariah Carey",year:"1990",genre:"Pop/R&B",format:"LP",tracks:"Side A:\n1. Vision of Love\n2. There's Got to Be a Way\n3. I Don't Wanna Cry\n4. Someday\n5. Vanishing\nSide B:\n6. All in Your Mind\n7. Alone in Love\n8. You Need Me\n9. Sent from Up Above\n10. Prisoner\n11. Love Takes Time"},
 {artist:"The Marias",title:"Cinema",year:"2021",genre:"Indie Pop",format:"LP",tracks:"Side A:\n1. Hush\n2. Para Siempre\n3. All I Really Want Is You\n4. Calling U Back\n5. Run Your Mouth\nSide B:\n6. Honey\n7. Ruthless\n8. Cinema\n9. Just a Feeling\n10. No One Noticed\n11. There She Goes Again"},
 {artist:"Meat Loaf",title:"Bat Out of Hell",year:"1977",genre:"Rock",format:"LP",tracks:"Side A:\n1. Bat Out of Hell\n2. You Took the Words Right Out of My Mouth\n3. Heaven Can Wait\nSide B:\n4. All Revved Up with No Place to Go\n5. Two Out of Three Ain't Bad\n6. Paradise by the Dashboard Light\n7. For Crying Out Loud"},
 {artist:"Meat Loaf",title:"Dead Ringer",year:"1981",genre:"Rock",format:"LP",tracks:"Side A:\n1. Peel Out\n2. I'll Kill You If You Don't Come Back\n3. More Than You Deserve\n4. I'm Gonna Love Her for Both of Us\nSide B:\n5. Dead Ringer for Love\n6. Everything Is Permitted\n7. Pause de Vie\n8. If You Really Want To"},
@@ -240,10 +211,14 @@ const COLLECTION=[
 {artist:"Menomena",title:"Friend and Foe",year:"2007",genre:"Indie Rock",format:"LP",tracks:"Side A:\n1. Muscle 'n Flo\n2. Wet and Rusting\n3. Rotten Hell\n4. My My\n5. Boyscout'n\nSide B:\n6. Ghostship\n7. The Pelican\n8. Weird\n9. Lull\n10. Running\n11. Air Aid"},
 {artist:"Menomena",title:"Mines",year:"2010",genre:"Indie Rock",format:"LP",tracks:"Side A:\n1. Queen Black Acid\n2. Taos\n3. BOTE\n4. Dirty Cartoons\n5. Tithe\nSide B:\n6. Killemall\n7. INTIL\n8. Five Little Rooms\n9. Sahel\n10. Foe"},
 {artist:"Menomena",title:"Moms",year:"2012",genre:"Indie Rock",format:"LP",tracks:"Side A:\n1. Plumage\n2. Pique\n3. Capsule\n4. Heavy Is as Heavy Does\n5. Prom\nSide B:\n6. Skintercourse\n7. Giftshoppe\n8. One Gap Left\n9. Baton\n10. Ketamine"},
-{artist:"Nat King Cole",title:"The Swingin' Moods of Nat King Cole",year:"1967",genre:"Jazz/Pop",format:"2xLP",tracks:"LP1 Side A:\n1. I'm Gonna Laugh You Right Out of My Life\n2. It's Only a Paper Moon\n3. Baby, Baby All the Time\n4. I Want to Be Happy\n5. Tenderly\nLP1 Side B:\n6. Route 66\n7. Straighten Up and Fly Right\n8. Sweet Lorraine\n9. The Man I Love\n10. Too Young\nLP2 Side C:\n11. Unforgettable\n12. Mona Lisa\n13. Nature Boy\n14. Because of Rain\n15. Walkin'\nLP2 Side D:\n16. Ballerina\n17. Pretend\n18. Answer Me, My Love\n19. Smile\n20. Fascinating Rhythm"},
-{artist:"of Montreal",title:"The Controllersphere",year:"2011",genre:"Indie Rock/Experimental",format:'12" EP',tracks:"Side A:\n1. Black Lion Massacre\n2. Flunkt Sass vs The Root Plume\nSide B:\n3. Holiday Call\n4. L'age D'or\n5. Slave Translator"},
+{artist:"Miley Cyrus",title:"Plastic Hearts",year:"2020",genre:"Pop/Rock",format:"2xLP",tracks:"Side A:\n1. WTF Do I Know\n2. Plastic Hearts\n3. Angels Like You\n4. Prisoner (feat. Dua Lipa)\nSide B:\n5. Gimme What I Want\n6. Night Crawling (feat. Billy Idol)\n7. Midnight Sky\n8. High\nSide C:\n9. Hate Me\n10. Bad Karma (feat. Joan Jett)\n11. Never Be Me\n12. Golden G String\nSide D:\n13. Edge of Midnight (Midnight Sky Remix) (feat. Stevie Nicks)\n14. Heart of Glass (Live from the iHeart Music Festival)\n15. Zombie (Live from the NIVA Save Our Stages Festival)"},
 {artist:"of Montreal",title:"False Priest",year:"2010",genre:"Indie Pop",format:"LP",tracks:"Side A:\n1. I Feel Ya' Strutter\n2. Coquet Coquette\n3. Enemy Gene\n4. Girl Named Hello\n5. Sex Karma\n6. Like a Tourist\nSide B:\n7. Famine Affair\n8. You Do Mutilate?\n9. Godly Intersex\n10. Casualty of You\n11. Hydra Fancies\n12. Our Riotous Defects"},
-{artist:"Richard Wolfe Children's Choir",title:"Christ Is for Children",year:"1970",genre:"Christmas/Gospel",format:"LP",tracks:"Side A:\n1. Christ Is for Children\n2. Away in a Manger\n3. Silent Night\n4. Joy to the World\n5. O Little Town of Bethlehem\nSide B:\n6. O Come All Ye Faithful\n7. The First Noel\n8. Hark! The Herald Angels Sing\n9. Angels We Have Heard on High\n10. We Three Kings"},
+{artist:"of Montreal",title:"The Controllersphere",year:"2011",genre:"Indie Rock/Experimental",format:'12" EP',tracks:"Side A:\n1. Black Lion Massacre\n2. Flunkt Sass vs The Root Plume\nSide B:\n3. Holiday Call\n4. L'age D'or\n5. Slave Translator"},
+{artist:"Nat King Cole",title:"The Swingin' Moods of Nat King Cole",year:"1967",genre:"Jazz/Pop",format:"2xLP",tracks:"LP1 Side A:\n1. I'm Gonna Laugh You Right Out of My Life\n2. It's Only a Paper Moon\n3. Baby, Baby All the Time\n4. I Want to Be Happy\n5. Tenderly\nLP1 Side B:\n6. Route 66\n7. Straighten Up and Fly Right\n8. Sweet Lorraine\n9. The Man I Love\n10. Too Young\nLP2 Side C:\n11. Unforgettable\n12. Mona Lisa\n13. Nature Boy\n14. Because of Rain\n15. Walkin'\nLP2 Side D:\n16. Ballerina\n17. Pretend\n18. Answer Me, My Love\n19. Smile\n20. Fascinating Rhythm"},
+{artist:"Phil Collins",title:"Face Value",year:"1981",genre:"Pop/Rock",format:"LP",tracks:"Side A:\n1. In the Air Tonight\n2. This Must Be Love\n3. Behind the Lines\n4. The Roof Is Leaking\n5. Droned\n6. Hand in Hand\nSide B:\n7. I Missed Again\n8. You Know What I Mean\n9. Thunder and Lightning\n10. I'm Not Moving\n11. If Leaving Me Is Easy\n12. Tomorrow Never Knows (with hidden \"Over the Rainbow\")"},
+{artist:"Queen",title:"Jazz",year:"1978",genre:"Rock",format:"LP",tracks:"Side A:\n1. Mustapha\n2. Fat Bottomed Girls\n3. Jealousy\n4. Bicycle Race\n5. If You Can't Beat Them\n6. Let Me Entertain You\nSide B:\n7. Dead on Time\n8. In Only Seven Days\n9. Dreamer's Ball\n10. Fun It\n11. Leaving Home Ain't Easy\n12. Don't Stop Me Now\n13. More of That Jazz"},
+{artist:"Red Hot Chili Peppers",title:"Californication",year:"1999",genre:"Rock",format:"2xLP",tracks:"Side A:\n1. Around the World\n2. Parallel Universe\n3. Scar Tissue\n4. Otherside\nSide B:\n5. Get on Top\n6. Californication\n7. Easily\n8. Porcelain\nSide C:\n9. Emit Remmus\n10. I Like Dirt\n11. This Velvet Glove\n12. Savior\nSide D:\n13. Purple Stain\n14. Right on Time\n15. Road Trippin\'"},
+{artist:"Richard Wolfe Children\'s Choir",title:"Christ Is for Children",year:"1970",genre:"Christmas/Gospel",format:"LP",tracks:"Side A:\n1. Christ Is for Children\n2. Away in a Manger\n3. Silent Night\n4. Joy to the World\n5. O Little Town of Bethlehem\nSide B:\n6. O Come All Ye Faithful\n7. The First Noel\n8. Hark! The Herald Angels Sing\n9. Angels We Have Heard on High\n10. We Three Kings"},
 {artist:"Rolling Stones",title:"Beggars Banquet",year:"1968",genre:"Rock",format:"LP",tracks:"Side A:\n1. Sympathy for the Devil\n2. No Expectations\n3. Dear Doctor\n4. Parachute Woman\n5. Jig-Saw Puzzle\nSide B:\n6. Street Fighting Man\n7. Prodigal Son\n8. Stray Cat Blues\n9. Factory Girl\n10. Salt of the Earth"},
 {artist:"Rolling Stones",title:"Tattoo You",year:"1981",genre:"Rock",format:"LP",tracks:"Side A:\n1. Start Me Up\n2. Hang Fire\n3. Slave\n4. Little T&A\n5. Black Limousine\n6. Neighbours\nSide B:\n7. Worried About You\n8. Tops\n9. Heaven\n10. No Use in Crying\n11. Waiting on a Friend"},
 {artist:"Santana",title:"Abraxas",year:"1970",genre:"Latin Rock",format:"LP",tracks:"Side A:\n1. Singing Winds, Crying Beasts\n2. Black Magic Woman/Gypsy Queen\n3. Oye Como Va\n4. Incident at Neshabur\nSide B:\n5. Se a Cabo\n6. Mother's Daughter\n7. Samba Pa Ti\n8. Hope You're Feeling Better\n9. El Nicoya"},
@@ -256,6 +231,7 @@ const COLLECTION=[
 {artist:"Supertramp",title:"Crime of the Century",year:"1974",genre:"Prog Rock",format:"LP",tracks:"Side A:\n1. School\n2. Bloody Well Right\n3. Hide in Your Shell\n4. Asylum\nSide B:\n5. Dreamer\n6. Rudy\n7. If Everyone Was Listening\n8. Crime of the Century"},
 {artist:"Supertramp",title:"Even in the Quietest Moments",year:"1977",genre:"Prog Rock",format:"LP",tracks:"Side A:\n1. Give a Little Bit\n2. Lover Boy\n3. Even in the Quietest Moments\n4. Downstream\nSide B:\n5. Babaji\n6. From Now On\n7. Fool's Overture"},
 {artist:"The Surfrajettes",title:"Easy as Pie",year:"2019",genre:"Surf Rock",format:"LP",tracks:"Side A:\n1. Easy as Pie\n2. Strawberry Fields Forever\n3. Pipeline\n4. Walk Don't Run\n5. Wipe Out\nSide B:\n6. Miserlou\n7. Surf Rider\n8. Let's Go Trippin'\n9. Out of Limits\n10. Penetration"},
+{artist:"Takeo Watanabe & Yuji Matsuyama",title:"Daitarn 3 (Original Soundtrack & More)",year:"1980",genre:"Anime Soundtrack/Jazz Funk",format:"LP",tracks:"Side 1:\n1. カムヒア！ダイターン3 (Come Here! Daitarn 3)\n2. 「出ました！破嵐万丈」より (From Ep. 1: Here He Comes! Banjo Haran)\n3. メガノイドの策謀 (The Meganoids' Scheme)\n4. 美しきアシスタント (The Beautiful Assistant)\n5. あれが噂の快男児 (That Famous Dashing Fellow)\n6. 火星の牙城 (The Stronghold of Mars)\n7. 「コロスは殺せない」より (From Ep. 20: Koros Can't Be Killed)\nSide 2:\n1. トッポでタンゴ (Toppo de Tango)\n2. 「スターの中のスター」より (From Ep. 22: Star of Stars)\n3. マッハ アタッカー，GO！ (Mach Attacker, GO!)\n4. 華麗なるコマンダー (The Magnificent Commander)\n5. ダイターン3の名のもとに (In the Name of Daitarn 3)\n6. 別離のとき (The Time of Parting)\n7. 「万丈、暁に消ゆ」より (From Ep. 40: Banjo Vanishes at Dawn)"},
 {artist:"The Trews",title:"Hope and Ruin",year:"2008",genre:"Rock",format:"LP",tracks:"Side A:\n1. Paranoid Freak\n2. Hope and Ruin\n3. Misery Loves Company\n4. My Punishment\n5. Friends in the Dark\nSide B:\n6. What's the Truth?\n7. Stay\n8. Bullets\n9. We're Here Now\n10. Last Time"},
 {artist:"The Trews",title:"The Trews",year:"2002",genre:"Rock",format:"LP",tracks:"Side A:\n1. Not Ready to Go\n2. I Was Wrong\n3. Tired of Waiting\n4. Highway of Heroes\n5. Poor Ol' Broken Hearted Me\nSide B:\n6. Hold Me in Your Arms\n7. Hope & Ruin\n8. So She's Leaving\n9. Father's Son\n10. Yer Gonna Have to Stay"},
 {artist:"Various Artists",title:"Santa Claus Is Canadian",year:"1970",genre:"Christmas",format:"LP",tracks:"Side A:\n1. Santa Claus Is Canadian\n2. Frosty the Snowman\n3. Rudolph the Red-Nosed Reindeer\n4. Jingle Bells\n5. Deck the Halls\nSide B:\n6. White Christmas\n7. Silent Night\n8. O Holy Night\n9. The Twelve Days of Christmas\n10. We Wish You a Merry Christmas"},
@@ -266,24 +242,7 @@ const COLLECTION=[
 {artist:"Zeus",title:"Say Us",year:"2010",genre:"Indie Rock",format:"LP",tracks:"Side A:\n1. Can't Stop Your Hands\n2. Are You Gonna Waste My Time?\n3. Nothing's Wrong\n4. How Does It Feel\n5. The Renegade\nSide B:\n6. You Make Me Wanna Die\n7. If You Want Me To\n8. Walking on the Waters\n9. Marching Through Your Head\n10. Honey I Don't Know Why"},
 ];
 
-// ── SORT NAME OVERRIDES ─────────────────────────────────────────────────────
-// Solo artists with real names sort by last name; stage names & bands sort as-is
-const SORT_NAME_OVERRIDES = {
-  "Billy Joel":"joel, billy",
-  "Bob Dylan":"dylan, bob",
-  "David Bowie":"bowie, david",
-  "David Wilcox":"wilcox, david",
-  "Eric Clapton":"clapton, eric",
-  "Frank Zappa":"zappa, frank",
-  "Jack Johnson":"johnson, jack",
-  "Jack White":"white, jack",
-  "JJ Cale":"cale, jj",
-  "John Lennon":"lennon, john",
-  "Nat King Cole":"cole, nat king",
-  "Steve Martin":"martin, steve",
-};
-
-// ── ARTWORK ─────────────────────────────────────────────────────────────────
+// ── ARTWORK via iTunes Search API ────────────────────────────────────────────
 const artCache = {};
 const artQueue = [];
 let processing = false;
@@ -294,10 +253,7 @@ function recordKey(r){ return r.artist + '|||' + r.title; }
 
 function queueArtwork(r){
   const k = recordKey(r);
-  // Allow retry for previously failed art (null) — skip only successful loads
-  if(k in artCache && artCache[k] !== null) return;
-  // If null (failed before), remove from cache to allow retry
-  if(artCache[k] === null) delete artCache[k];
+  if(k in artCache) return;
   if(!artQueue.find(x => recordKey(x) === k)) artQueue.push(r);
 }
 
@@ -310,6 +266,15 @@ const DIRECT_ART = {
 };
 
 const WIKI_TITLES = {
+  "Queen|||Jazz":"Jazz_(Queen_album)",
+  "Led Zeppelin|||In Through the Out Door":"In_Through_the_Out_Door",
+  "Phil Collins|||Face Value":"Face_Value_(album)",
+  "America|||America":"America_(America_album)",
+  "Mariah Carey|||Mariah Carey":"Mariah_Carey_(album)",
+  "Billie Eilish|||When We All Fall Asleep, Where Do We Go?":"When_We_All_Fall_Asleep,_Where_Do_We_Go%3F",
+  "Miley Cyrus|||Plastic Hearts":"Plastic_Hearts_(album)",
+  "Red Hot Chili Peppers|||Californication":"Californication_(album)",
+  "Harry Styles|||Harry's House":"Harry%27s_House_(album)",
   "AC/DC|||Dirty Deeds Done Dirt Cheap":"Dirty_Deeds_Done_Dirt_Cheap",
   "Arcade Fire|||Reflektor":"Reflektor",
   "Bahamas|||Bahamas Is Afie":"Bahamas_Is_Afie",
@@ -385,9 +350,9 @@ const WIKI_TITLES = {
 async function fetchArtForRecord(r){
   const k = recordKey(r);
   if(k in artCache) return;
+  const wikiTitle = WIKI_TITLES[k];
   const directArt = DIRECT_ART[k];
   if(directArt){ artCache[k]=directArt; return; }
-  const wikiTitle = WIKI_TITLES[k];
   if(!wikiTitle){ artCache[k]=null; return; }
   try {
     const url = `https://en.wikipedia.org/w/api.php?action=query&titles=${wikiTitle}&prop=pageimages&format=json&pithumbsize=400&pilicense=any&origin=*`;
@@ -416,6 +381,7 @@ async function processQueue(){
     newArtFetched = true;
   }
   processing = false;
+  // Save any newly fetched art URLs to bin so future visits skip Wikipedia
   if(newArtFetched){
     if(!binData.artCache) binData.artCache = {};
     let changed = false;
@@ -441,6 +407,7 @@ function updateArtInDOM(){
       slot.replaceWith(fb);
     }
   });
+  // update modal if open
   const mk = document.getElementById('modal').dataset.key;
   if(mk && (mk in artCache)){
     const artEl = document.getElementById('modal-art');
@@ -456,44 +423,19 @@ function updateArtInDOM(){
 let currentSort = 'az';
 let currentSearch = '';
 
-function sortKey(r){
-  const override = SORT_NAME_OVERRIDES[r.artist];
-  if(override) return override;
-  return r.artist.replace(/^the\s+/i,'').replace(/^of\s+/i,'').toLowerCase();
-}
+function sortKey(r){ return r.artist.replace(/^the\s+/i,'').replace(/^of\s+/i,'').toLowerCase(); }
 
 function getFiltered(){
   let list = [...COLLECTION];
   if(currentSearch){
     const q = currentSearch.toLowerCase();
-    list = list.filter(r =>
-      r.artist.toLowerCase().includes(q) ||
-      r.title.toLowerCase().includes(q) ||
-      r.genre.toLowerCase().includes(q) ||
-      r.year.includes(q) ||
-      r.tracks.toLowerCase().includes(q)
-    );
+    list = list.filter(r => r.artist.toLowerCase().includes(q) || r.title.toLowerCase().includes(q));
   }
   if(currentSort==='az') list.sort((a,b) => sortKey(a).localeCompare(sortKey(b)) || a.title.localeCompare(b.title));
-  else if(currentSort==='year') list.sort((a,b) => a.year - b.year || sortKey(a).localeCompare(sortKey(b)));
-  else if(currentSort==='genre') list.sort((a,b) => a.genre.localeCompare(b.genre) || sortKey(a).localeCompare(sortKey(b)));
-  else if(currentSort==='most'){
-    list.sort((a,b) => {
-      const ca = (binData.listens[recordKey(a)]?.count || 0);
-      const cb = (binData.listens[recordKey(b)]?.count || 0);
-      return cb - ca || sortKey(a).localeCompare(sortKey(b));
-    });
-  } else if(currentSort==='recent'){
-    list.sort((a,b) => {
-      const la = (binData.listens[recordKey(a)]?.lastPlayed || 0);
-      const lb = (binData.listens[recordKey(b)]?.lastPlayed || 0);
-      return lb - la || sortKey(a).localeCompare(sortKey(b));
-    });
-  }
+  else if(currentSort==='year') list.sort((a,b) => a.year - b.year || a.artist.localeCompare(b.artist));
+  else list.sort((a,b) => a.genre.localeCompare(b.genre) || sortKey(a).localeCompare(sortKey(b)));
   return list;
 }
-
-function getDecade(year){ return Math.floor(parseInt(year)/10)*10 + 's'; }
 
 function renderGrid(){
   const grid = document.getElementById('grid');
@@ -502,17 +444,11 @@ function renderGrid(){
   const nr = document.getElementById('no-results');
   if(!list.length){ grid.innerHTML=''; nr.style.display='block'; return; }
   nr.style.display='none';
-  let html = '', lastDivider = null;
+  let html = '', lastL = null;
   list.forEach((r, i) => {
     if(currentSort==='az'){
       const L = sortKey(r)[0].toUpperCase();
-      if(L !== lastDivider){ lastDivider=L; html += `<div class="letter-divider"><span>${L}</span><hr></div>`; }
-    } else if(currentSort==='year'){
-      const d = getDecade(r.year);
-      if(d !== lastDivider){ lastDivider=d; html += `<div class="decade-divider"><span>${d}</span><hr></div>`; }
-    } else if(currentSort==='genre'){
-      const g = r.genre;
-      if(g !== lastDivider){ lastDivider=g; html += `<div class="genre-divider"><span>${g}</span><hr></div>`; }
+      if(L !== lastL){ lastL=L; html += `<div class="letter-divider"><span>${L}</span><hr></div>`; }
     }
     const k = recordKey(r);
     const url = artCache[k];
@@ -593,24 +529,14 @@ const BIN_ID = '69c1df91c3097a1dd552e9e4';
 const API_KEY = '$2a$10$vwgLpB3phbOMxVxvG0g5RusRNeT/ct9Y0Uno9.zA3v4EfjJyP0t6.';
 const BIN_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
 const HEADERS = {'Content-Type':'application/json','X-Master-Key':API_KEY,'X-Bin-Meta':'false'};
-
-// Format-based durations in ms
-const FORMAT_DURATION = {
-  'LP': 60 * 60 * 1000,
-  '2xLP': 120 * 60 * 1000,
-  '12" Single': 20 * 60 * 1000,
-  '12" EP': 30 * 60 * 1000,
-};
-const DEFAULT_DURATION = 60 * 60 * 1000;
-
-function getDuration(r){
-  if(!r) return DEFAULT_DURATION;
-  return FORMAT_DURATION[r.format] || DEFAULT_DURATION;
+function getNowPlayingDuration(format){
+  if(!format) return 60 * 60 * 1000;
+  const isDouble = /2x|double/i.test(format);
+  return isDouble ? 2 * 60 * 60 * 1000 : 60 * 60 * 1000;
 }
 
 let binData = {listens:{}, nowPlaying:null};
 let currentModalKey = null;
-let npTimerInterval = null;
 
 async function loadBinData(){
   try {
@@ -619,10 +545,11 @@ async function loadBinData(){
     binData = await res.json();
     if(!binData.listens) binData.listens = {};
     if(!binData.artCache) binData.artCache = {};
+    // Seed artCache from saved URLs — skips Wikipedia for known albums
     Object.entries(binData.artCache).forEach(([k,v]) => { artCache[k] = v; });
   } catch { binData = {listens:{}, nowPlaying:null, artCache:{}}; }
   renderNowPlaying();
-  renderGrid();
+  renderGrid(); // Re-render now that cached art is available
 }
 
 async function saveBinData(){
@@ -637,22 +564,18 @@ function formatDate(ts){
   return d.toLocaleDateString('en-CA', {month:'short', day:'numeric', year:'numeric'});
 }
 
-function timeRemaining(np){
-  if(!np) return null;
-  const r = COLLECTION.find(x => recordKey(x) === np.key);
-  const duration = getDuration(r);
-  const remaining = duration - (Date.now() - np.startedAt);
+function timeRemaining(ts, format){
+  const duration = getNowPlayingDuration(format);
+  const remaining = duration - (Date.now() - ts);
   if(remaining <= 0) return null;
   const mins = Math.ceil(remaining / 60000);
-  return mins > 60 ? `${Math.floor(mins/60)}h ${mins%60}m left` : `${mins}m left`;
+  return mins > 60 ? `${Math.ceil(mins/60)}h` : `${mins}m`;
 }
 
 function renderNowPlaying(){
   const np = binData.nowPlaying;
   const el = document.getElementById('now-playing');
-  if(npTimerInterval){ clearInterval(npTimerInterval); npTimerInterval = null; }
-
-  if(!np || !timeRemaining(np)){
+  if(!np || !timeRemaining(np.startedAt, np.format)){
     el.classList.remove('visible');
     return;
   }
@@ -663,21 +586,11 @@ function renderNowPlaying(){
   document.getElementById('np-artist').textContent = r.artist;
   document.getElementById('np-title').textContent = r.title;
   document.getElementById('np-tracks').textContent = r.tracks;
-  document.getElementById('np-time-left').textContent = timeRemaining(np);
 
   updateNowPlayingArt(np.key, r);
 
-  // Update time remaining every minute
-  npTimerInterval = setInterval(() => {
-    const tr = timeRemaining(binData.nowPlaying);
-    if(!tr){
-      el.classList.remove('visible');
-      clearInterval(npTimerInterval);
-      npTimerInterval = null;
-    } else {
-      document.getElementById('np-time-left').textContent = tr;
-    }
-  }, 60000);
+  // Check every minute if the hour has expired
+  setTimeout(renderNowPlaying, 60000);
 }
 
 function updateNowPlayingArt(key, r){
@@ -689,6 +602,7 @@ function updateNowPlayingArt(key, r){
   } else if(url === null){
     artEl.innerHTML = `<div class="now-playing-art-placeholder">${vinylSVG}</div>`;
   } else {
+    // Art not loaded yet — show placeholder and retry once art loads
     artEl.innerHTML = `<div class="now-playing-art-placeholder">${vinylSVG}</div>`;
     const interval = setInterval(() => {
       const loaded = artCache[key];
@@ -700,102 +614,38 @@ function updateNowPlayingArt(key, r){
   }
 }
 
-// ── STOP NOW PLAYING ──
-document.getElementById('np-stop').addEventListener('click', async () => {
-  binData.nowPlaying = null;
-  renderNowPlaying();
-  // Update modal if open
-  if(currentModalKey) updateModalPlayStats(currentModalKey);
-  await saveBinData();
-});
-
 function updateModalPlayStats(key){
   const data = binData.listens[key] || {count:0, lastPlayed:null};
   document.getElementById('play-count').textContent = data.count || '0';
   document.getElementById('last-played').textContent = formatDate(data.lastPlayed);
 
   const btn = document.getElementById('play-btn');
-  const isPlaying = binData.nowPlaying?.key === key && timeRemaining(binData.nowPlaying);
+  const isPlaying = binData.nowPlaying?.key === key && timeRemaining(binData.nowPlaying?.startedAt, binData.nowPlaying?.format);
   btn.classList.toggle('active', !!isPlaying);
 }
 
-// ── PLAY BUTTON WITH COOLDOWN ──
-let playCooldown = false;
-
 async function handlePlayButton(){
-  if(!currentModalKey || playCooldown) return;
+  if(!currentModalKey) return;
   const key = currentModalKey;
   const btn = document.getElementById('play-btn');
-
-  // Cooldown: disable for 5 seconds to prevent accidental double-taps
-  playCooldown = true;
   btn.disabled = true;
-  btn.classList.add('cooldown');
 
   // Update listen count
   if(!binData.listens[key]) binData.listens[key] = {count:0, lastPlayed:null};
   binData.listens[key].count++;
   binData.listens[key].lastPlayed = Date.now();
 
-  // Set now playing (overrides any currently playing record)
-  binData.nowPlaying = {key, startedAt: Date.now()};
+  // Set now playing
+  const r = COLLECTION.find(x => recordKey(x) === key);
+  binData.nowPlaying = {key, startedAt: Date.now(), format: r?.format || 'LP'};
 
   await saveBinData();
   updateModalPlayStats(key);
   renderNowPlaying();
-
-  setTimeout(() => {
-    playCooldown = false;
-    btn.disabled = false;
-    btn.classList.remove('cooldown');
-  }, 5000);
+  btn.disabled = false;
 }
 
 document.getElementById('play-btn').addEventListener('click', handlePlayButton);
-
-// ── RANDOM PICK ──
-let randomMode = 'random';
-
-document.querySelectorAll('.random-mode-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.random-mode-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    randomMode = btn.dataset.mode;
-  });
-});
-
-document.getElementById('random-btn').addEventListener('click', () => {
-  const list = getFiltered();
-  if(!list.length) return;
-
-  let pick;
-  if(randomMode === 'random'){
-    pick = list[Math.floor(Math.random() * list.length)];
-  } else if(randomMode === 'least-recent'){
-    // Sort by last played ascending (never played = 0 = first)
-    const sorted = [...list].sort((a,b) => {
-      const la = binData.listens[recordKey(a)]?.lastPlayed || 0;
-      const lb = binData.listens[recordKey(b)]?.lastPlayed || 0;
-      return la - lb;
-    });
-    // Pick randomly from the bottom 25%
-    const pool = sorted.slice(0, Math.max(1, Math.ceil(sorted.length * 0.25)));
-    pick = pool[Math.floor(Math.random() * pool.length)];
-  } else if(randomMode === 'least-played'){
-    const sorted = [...list].sort((a,b) => {
-      const ca = binData.listens[recordKey(a)]?.count || 0;
-      const cb = binData.listens[recordKey(b)]?.count || 0;
-      return ca - cb;
-    });
-    const pool = sorted.slice(0, Math.max(1, Math.ceil(sorted.length * 0.25)));
-    pick = pool[Math.floor(Math.random() * pool.length)];
-  }
-
-  if(pick){
-    const idx = list.indexOf(pick);
-    openModal(idx);
-  }
-});
 
 // Load bin data on startup
 loadBinData();
